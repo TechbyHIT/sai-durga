@@ -8,7 +8,7 @@ export const site = {
   whatsappHref: "https://wa.me/918121202055",
   email: "invisiblegrillssaidurga@gmail.com",
   emailHref: "mailto:invisiblegrillssaidurga@gmail.com",
-  baseUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.saidurgainvisiblegrills.com",
+  baseUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://saidurgainvisiblegrills.in",
   addressRegion: "Andhra Pradesh",
   addressCountry: "IN",
   primaryCitySlug: "visakhapatnam",
