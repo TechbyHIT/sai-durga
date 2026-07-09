@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  @apply bg-base-white text-silver-700 antialiased;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  background:
+    radial-gradient(circle at top left, rgba(234, 210, 140, 0.18), transparent 32rem),
+    linear-gradient(180deg, #ffffff 0%, #fafaf8 42%, #ffffff 100%);
+}
+
+body.menu-open {
+  overflow: hidden;
+  touch-action: none;
+}
+
+@layer utilities {
+  .gpu-scroll {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+}
+
+::selection {
+  @apply bg-gold-200 text-silver-900;
+}
+
+a {
+  @apply underline-offset-2;
+}
+
+:focus-visible {
+  outline-color: #cfa23a;
+}
+
+@layer components {
+  .seo-section-card {
+    @apply rounded-3xl border border-silver-100 bg-white/90 p-6 shadow-card transition duration-200 hover:-translate-y-0.5 hover:border-gold-200 hover:shadow-gold;
+  }
+
+  .gold-divider {
+    @apply h-1 w-14 rounded-full bg-gradient-to-r from-gold-300 to-gold-600;
+  }
+
+  .soft-gold-panel {
+    @apply border border-gold-100 bg-gradient-to-br from-gold-50 via-white to-base-off;
+  }
+}

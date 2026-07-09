@@ -1,0 +1,37 @@
+{
+  "name": "saidurga-invisible-grills-pseo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Programmatic SEO platform for Saidurga Invisible Grills, built to scale safely to 400,000 pages.",
+  "scripts": {
+    "prepare-images": "node scripts/copy-images.mjs",
+    "predev": "node scripts/copy-images.mjs",
+    "prebuild": "node scripts/copy-images.mjs",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start -H 0.0.0.0 -p ${PORT:-3000}",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "pages:stats": "tsx scripts/page-stats.ts"
+  },
+  "dependencies": {
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^15.1.0",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13",
+    "tsx": "^4.22.5",
+    "typescript": "^5.6.2"
+  },
+  "engines": {
+    "node": ">=18.18.0"
+  }
+}
