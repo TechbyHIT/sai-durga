@@ -1,14 +1,12 @@
-version: "3.9"
-
 services:
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: app
+    container_name: sai-durga-app
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "8080:3000"
     environment:
       NODE_ENV: production
       PORT: 3000
