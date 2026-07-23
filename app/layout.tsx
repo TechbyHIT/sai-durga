@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SiteExploreLinksLazy } from "@/components/SiteExploreLinksLazy";
 import { FloatingButtons } from "@/components/FloatingButtons";
+import { GoogleAdsTag } from "@/components/GoogleAdsTag";
 import { Schema } from "@/components/Schema";
 import { organizationSchema, websiteSchema, localBusinessSchema } from "@/lib/schema";
 import { site } from "@/lib/site";
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en-IN" className={inter.variable}>
       <body className="flex min-h-screen flex-col font-sans">
+        <GoogleAdsTag />
         <Schema data={[organizationSchema(), websiteSchema(), localBusinessSchema()]} />
         <TopBar />
         <Header />

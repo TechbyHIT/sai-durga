@@ -4,6 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: sai-durga-app
+    init: true
     restart: unless-stopped
     ports:
       - "8080:3000"
@@ -12,4 +13,90 @@ services:
       PORT: 3000
       HOSTNAME: 0.0.0.0
       NEXT_TELEMETRY_DISABLED: 1
+      NEXT_IMAGE_UNOPTIMIZED: 1
       NEXT_PUBLIC_SITE_URL: https://saidurgainvisiblegrills.in
+      NODE_OPTIONS: "--max-old-space-size=384"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          memory: 128M
+    read_only: true
+    tmpfs:
+      - /tmp:size=50m,mode=1777,uid=1001,gid=1001
+      - /app/.next/cache:size=100m,mode=755,uid=1001,gid=1001
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 8192
+      nproc:
+        soft: 512
+        hard: 1024
+    healthcheck:
+      test: ["CMD", "/app/scripts/healthcheck.sh"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  ops-monitor:
+    image: alpine:3.20
+    container_name: sai-durga-ops-monitor
+    init: true
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      APP_URL: http://app:3000/
+      MONITOR_INTERVAL: "60"
+    volumes:
+      - ./scripts/monitor-cron.sh:/scripts/monitor-cron.sh:ro
+    command: ["/bin/sh", "/scripts/monitor-cron.sh"]
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 32M
+
+  ops-cleanup:
+    image: alpine:3.20
+    container_name: sai-durga-ops-cleanup
+    init: true
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      TARGET_CONTAINER: sai-durga-app
+      CLEANUP_INTERVAL: "43200"
+    volumes:
+      - ./scripts/cleanup-cron.sh:/scripts/cleanup-cron.sh:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: ["/bin/sh", "/scripts/cleanup-cron.sh"]
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 32M

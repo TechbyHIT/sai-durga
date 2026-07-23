@@ -20,6 +20,18 @@ body.menu-open {
   touch-action: none;
 }
 
+.mobile-nav-toggle {
+  height: 3rem;
+  width: 3rem;
+}
+
+@media (min-width: 640px) {
+  .mobile-nav-toggle {
+    height: 2.75rem;
+    width: 2.75rem;
+  }
+}
+
 @layer utilities {
   .gpu-scroll {
     transform: translateZ(0);

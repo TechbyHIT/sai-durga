@@ -78,3 +78,29 @@ export const SITEMAP_BUCKETS = [
 ] as const;
 
 export type SitemapBucket = (typeof SITEMAP_BUCKETS)[number];
+
+/**
+ * Max URLs in the single /sitemap.xml for Google Search Console.
+ * Google allows 50,000 per file; 47,000 keeps a safe buffer.
+ */
+export const SEARCH_CONSOLE_SITEMAP_MAX_URLS = SITEMAP_MAX_URLS_PER_FILE;
+
+/** Always included first — hubs and core commercial pages. */
+export const SEARCH_CONSOLE_GUARANTEED_BUCKETS = [
+  "core",
+  "services",
+  "locations",
+  "areas",
+  "service-city",
+  "service-area",
+  "intent",
+  "price",
+  "comparison",
+  "blog",
+] as const satisfies readonly SitemapBucket[];
+
+/** Filled after guaranteed buckets until SEARCH_CONSOLE_SITEMAP_MAX_URLS is reached. */
+export const SEARCH_CONSOLE_SCALE_BUCKETS = [
+  "local-intent-area",
+  "hyperlocal-intent-area",
+] as const satisfies readonly SitemapBucket[];

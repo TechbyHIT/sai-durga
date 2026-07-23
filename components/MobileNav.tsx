@@ -27,7 +27,7 @@ function Chevron({ open }: { open: boolean }) {
   );
 }
 
-/** Mobile drawer menu — client-only overlay, mounted after first open to avoid hydration issues. */
+/** Mobile drawer menu — client-only (no SSR) to avoid hydration mismatches. */
 export function MobileNav() {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -64,7 +64,7 @@ export function MobileNav() {
     <>
       <button
         type="button"
-        className="flex h-11 w-11 items-center justify-center rounded-2xl border border-gold-200 bg-gold-50 text-silver-900 xl:hidden"
+        className="mobile-nav-toggle flex shrink-0 items-center justify-center rounded-2xl border border-gold-200 bg-gold-50 text-silver-900 xl:hidden"
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
         onClick={() => (open ? closeMenu() : openMenu())}
@@ -97,8 +97,8 @@ export function MobileNav() {
             aria-modal="true"
             role="dialog"
           >
-            <div className="flex items-center justify-between gap-3 border-b border-silver-100 px-4 py-4">
-              <Link href="/" onClick={closeMenu} className="flex min-w-0 items-center">
+            <div className="flex items-center justify-between gap-3 border-b border-silver-100 px-4 py-5">
+              <Link href="/" onClick={closeMenu} className="flex min-w-0 flex-1 items-center">
                 <BrandLogo size="compact" />
               </Link>
               <button

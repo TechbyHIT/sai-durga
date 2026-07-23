@@ -9,14 +9,14 @@ export function BrandLogo({ size = "default" }: { size?: "default" | "compact" }
     <Image
       src="/brand/logo.png"
       alt={`${site.name} — Safe Living, Stylish View, Strong Protection`}
-      width={compact ? 220 : 320}
-      height={compact ? 56 : 72}
+      width={compact ? 340 : 440}
+      height={compact ? 80 : 100}
       priority
-      sizes={compact ? "220px" : "(max-width: 640px) 240px, 320px"}
+      sizes={compact ? "340px" : "(max-width: 639px) 400px, 440px"}
       className={
         compact
-          ? "h-11 w-auto max-w-[220px] object-contain object-left sm:h-12"
-          : "h-14 w-auto max-w-[260px] object-contain object-left sm:h-16 sm:max-w-[320px]"
+          ? "h-16 w-auto max-w-[340px] object-contain object-left sm:h-16"
+          : "h-[5.25rem] w-auto max-w-[min(82vw,400px)] object-contain object-left sm:h-20 sm:max-w-[400px] lg:h-24 lg:max-w-[440px]"
       }
     />
   );

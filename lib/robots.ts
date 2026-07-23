@@ -11,6 +11,6 @@ export const DISALLOWED_PATHS = [
   "/*?utm=",
 ];
 
-export function getSitemapIndexUrl(): string {
+export function getSitemapUrl(): string {
   return absoluteUrl("/sitemap.xml");
 }

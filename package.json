@@ -9,10 +9,14 @@
     "prebuild": "node scripts/copy-images.mjs",
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -H 0.0.0.0 -p ${PORT:-3000}",
+    "prepare:standalone": "sh scripts/prepare-standalone.sh",
+    "deploy:pm2": "sh scripts/deploy-pm2.sh",
+    "start": "node server.js",
+    "start:standalone": "node .next/standalone/server.js",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "pages:stats": "tsx scripts/page-stats.ts"
+    "pages:stats": "tsx scripts/page-stats.ts",
+    "validate:production": "node scripts/validate-production.mjs"
   },
   "dependencies": {
     "next": "^15.1.0",

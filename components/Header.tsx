@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { BrandLogo } from "@/components/BrandLogo";
 import { DesktopNav } from "@/components/DesktopNav";
-import { MobileNav } from "@/components/MobileNav";
+import { MobileNavLoader } from "@/components/MobileNavLoader";
 import { site } from "@/lib/site";
-
 /** Site header — server-rendered shell; mobile drawer is a small client island. */
 export function Header() {
   return (
@@ -24,8 +23,12 @@ export function Header() {
         </div>
       </div>
 
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 sm:py-4">
-        <Link href="/" className="flex shrink-0 items-center" aria-label={`${site.name} home`}>
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3 py-5 sm:gap-4 sm:px-6 sm:py-5">
+        <Link
+          href="/"
+          className="flex min-w-0 flex-1 items-center sm:flex-none sm:shrink-0"
+          aria-label={`${site.name} home`}
+        >
           <BrandLogo />
         </Link>
 
@@ -46,7 +49,7 @@ export function Header() {
           </a>
         </div>
 
-        <MobileNav />
+        <MobileNavLoader />
       </div>
     </header>
   );

@@ -1,9 +1,9 @@
-import { buildSitemapIndexXml } from "@/lib/sitemap";
+import { buildSearchConsoleSitemapXml } from "@/lib/sitemap";
 
 export const revalidate = 3600;
 
 export function GET() {
-  const xml = buildSitemapIndexXml();
+  const xml = buildSearchConsoleSitemapXml();
   return new Response(xml, {
     headers: {
       "Content-Type": "application/xml; charset=utf-8",

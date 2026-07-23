@@ -3,7 +3,14 @@ import { cities } from "@/data/cities";
 import { areas } from "@/data/areas";
 import { comparisons } from "@/data/comparisons";
 import { blogPosts } from "@/data/blogTopics";
-import { SITEMAP_MAX_URLS_PER_FILE, SitemapBucket, SITEMAP_BUCKETS } from "@/data/pageRules";
+import {
+  SITEMAP_MAX_URLS_PER_FILE,
+  SitemapBucket,
+  SITEMAP_BUCKETS,
+  SEARCH_CONSOLE_SITEMAP_MAX_URLS,
+  SEARCH_CONSOLE_GUARANTEED_BUCKETS,
+  SEARCH_CONSOLE_SCALE_BUCKETS,
+} from "@/data/pageRules";
 import {
   resolveFlatSlug,
   getAllServiceCitySlugs,
@@ -29,19 +36,48 @@ const now = () => new Date().toISOString();
 function indexableFlatEntries(slugs: string[]): SitemapUrlEntry[] {
   const entries: SitemapUrlEntry[] = [];
   for (const slug of slugs) {
-    const resolved = resolveFlatSlug(slug);
-    if (!resolved) continue;
-    // Metadata-only gate: also skips pages whose canonical points elsewhere, since those
-    // are represented in the sitemap by their canonical target, not themselves.
-    if (!isFlatPageIndexableByMetadata(resolved)) continue;
-    const crawlPriority = crawlPriorityForResolved(resolved);
-    entries.push({
-      loc: absoluteUrl(`/${slug}`),
-      lastModified: now(),
-      priority: crawlPriority === CRAWL_PRIORITY.P1 ? 0.9 : crawlPriority === CRAWL_PRIORITY.P2 ? 0.7 : 0.5,
-    });
+    const entry = flatEntryFromSlug(slug);
+    if (entry) entries.push(entry);
   }
   return entries;
+}
+
+function flatEntryFromSlug(slug: string): SitemapUrlEntry | null {
+  const resolved = resolveFlatSlug(slug);
+  if (!resolved || !isFlatPageIndexableByMetadata(resolved)) return null;
+  const crawlPriority = crawlPriorityForResolved(resolved);
+  return {
+    loc: absoluteUrl(`/${slug}`),
+    lastModified: now(),
+    priority: crawlPriority === CRAWL_PRIORITY.P1 ? 0.9 : crawlPriority === CRAWL_PRIORITY.P2 ? 0.7 : 0.5,
+  };
+}
+
+function addUniqueEntries(
+  target: SitemapUrlEntry[],
+  seen: Set<string>,
+  source: SitemapUrlEntry[],
+  limit: number,
+): number {
+  let added = 0;
+  for (const entry of source) {
+    if (added >= limit) break;
+    if (seen.has(entry.loc)) continue;
+    seen.add(entry.loc);
+    target.push(entry);
+    added++;
+  }
+  return added;
+}
+
+function scaleBucketEntries(minPriority: number): SitemapUrlEntry[] {
+  const entries: SitemapUrlEntry[] = [];
+  for (const bucket of SEARCH_CONSOLE_SCALE_BUCKETS) {
+    for (const entry of getBucketEntries(bucket)) {
+      if (entry.priority >= minPriority) entries.push(entry);
+    }
+  }
+  return entries.sort((a, b) => b.priority - a.priority);
 }
 
 function coreEntries(): SitemapUrlEntry[] {
@@ -148,6 +184,44 @@ export function buildUrlsetXml(entries: SitemapUrlEntry[]): string {
     )
     .join("\n");
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`;
+}
+
+let qualifiedSitemapCache: SitemapUrlEntry[] | null = null;
+
+/** All qualified indexable URLs, highest priority first. */
+export function getAllQualifiedSitemapEntries(): SitemapUrlEntry[] {
+  if (qualifiedSitemapCache) return qualifiedSitemapCache;
+
+  const seen = new Set<string>();
+  const entries: SitemapUrlEntry[] = [];
+
+  for (const bucket of SEARCH_CONSOLE_GUARANTEED_BUCKETS) {
+    addUniqueEntries(entries, seen, getBucketEntries(bucket), Number.POSITIVE_INFINITY);
+  }
+
+  addUniqueEntries(entries, seen, scaleBucketEntries(0.7), Number.POSITIVE_INFINITY);
+  addUniqueEntries(
+    entries,
+    seen,
+    scaleBucketEntries(0.5).filter((entry) => entry.priority < 0.7),
+    Number.POSITIVE_INFINITY,
+  );
+
+  qualifiedSitemapCache = entries.sort((a, b) => b.priority - a.priority);
+  return qualifiedSitemapCache;
+}
+
+/** Qualified URLs for the single /sitemap.xml (capped at 47,000, best first). */
+export function getSearchConsoleSitemapEntries(): SitemapUrlEntry[] {
+  return getAllQualifiedSitemapEntries().slice(0, SEARCH_CONSOLE_SITEMAP_MAX_URLS);
+}
+
+export function buildSearchConsoleSitemapXml(): string {
+  return buildUrlsetXml(getSearchConsoleSitemapEntries());
+}
+
+export function getSearchConsoleSitemapUrlCount(): number {
+  return getSearchConsoleSitemapEntries().length;
 }
 
 export function buildSitemapIndexXml(): string {

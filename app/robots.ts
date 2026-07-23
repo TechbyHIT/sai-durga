@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { DISALLOWED_PATHS, getSitemapIndexUrl } from "@/lib/robots";
+import { DISALLOWED_PATHS, getSitemapUrl } from "@/lib/robots";
 import { site } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
@@ -11,7 +11,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: DISALLOWED_PATHS,
       },
     ],
-    sitemap: getSitemapIndexUrl(),
+    sitemap: getSitemapUrl(),
     host: site.baseUrl,
   };
 }
