@@ -22,7 +22,10 @@ if ! command -v pm2 >/dev/null 2>&1; then
 fi
 
 log "Installing dependencies"
-npm ci
+if ! npm ci; then
+  log "WARN: npm ci failed — syncing lock file with npm install"
+  npm install
+fi
 
 log "Building production bundle"
 export NODE_ENV=production
